@@ -115,7 +115,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const eventData = validateBody(insertEventSchema, req.body);
+      // Prepare data with properly formatted dates
+      const data = { ...req.body };
+      
+      // Convert string dates to proper Date objects
+      if (data.startDate) {
+        data.startDate = new Date(data.startDate);
+      }
+      if (data.endDate) {
+        data.endDate = new Date(data.endDate);
+      }
+      
+      const eventData = validateBody(insertEventSchema, data);
       const event = await storage.createEvent(eventData);
       
       res.status(201).json(event);
@@ -136,7 +147,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const event = await storage.updateEvent(id, req.body);
+      // Prepare data with properly formatted dates
+      const data = { ...req.body };
+      
+      // Convert string dates to proper Date objects
+      if (data.startDate) {
+        data.startDate = new Date(data.startDate);
+      }
+      if (data.endDate) {
+        data.endDate = new Date(data.endDate);
+      }
+      
+      const event = await storage.updateEvent(id, data);
       
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
