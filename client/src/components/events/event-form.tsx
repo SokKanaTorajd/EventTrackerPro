@@ -367,7 +367,7 @@ export function EventForm({ defaultValues, isEditing = false, eventId }: EventFo
                             <Select
                               onValueChange={field.onChange}
                               defaultValue={field.value}
-                              disabled={index < 4} // Don't allow editing of standard fields
+                              // Allow changing field types for all fields
                             >
                               <FormControl>
                                 <SelectTrigger>
@@ -434,8 +434,7 @@ export function EventForm({ defaultValues, isEditing = false, eventId }: EventFo
                             <Switch
                               checked={field.value}
                               onCheckedChange={field.onChange}
-                              disabled={index < 3} // First three fields are always required
-                              aria-readonly={index < 3}
+                              // Allow changing required status for all fields
                             />
                           </FormControl>
                           <FormMessage />
