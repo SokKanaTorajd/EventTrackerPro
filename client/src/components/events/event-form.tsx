@@ -43,6 +43,9 @@ const formFieldSchema = z.object({
 // Extend the insertEventSchema with frontend validation
 const eventFormSchema = insertEventSchema.extend({
   formFields: z.array(formFieldSchema).min(1, "At least one form field is required"),
+  // Make dates optional strings instead of Dates
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
 }).refine(
   (data) => {
     // Ensure that the end date is after the start date
@@ -100,11 +103,10 @@ export function EventForm({ defaultValues, isEditing = false, eventId }: EventFo
   async function onSubmit(data: EventFormValues) {
     setIsSubmitting(true);
     try {
-      // Format dates properly
+      // The date values should already be properly formatted strings
       const formattedData = {
         ...data,
-        startDate: data.startDate ? new Date(data.startDate).toISOString() : undefined,
-        endDate: data.endDate ? new Date(data.endDate).toISOString() : undefined,
+        // No need to convert to Date object and back, as we're handling the format at the input level
       };
       
       if (isEditing && eventId) {
@@ -244,8 +246,10 @@ export function EventForm({ defaultValues, isEditing = false, eventId }: EventFo
                     <FormControl>
                       <Input
                         type="datetime-local"
-                        {...field}
-                        value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
+                        onChange={(e) => {
+                          field.onChange(e.target.value ? e.target.value : undefined);
+                        }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -262,8 +266,10 @@ export function EventForm({ defaultValues, isEditing = false, eventId }: EventFo
                     <FormControl>
                       <Input
                         type="datetime-local"
-                        {...field}
-                        value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
+                        onChange={(e) => {
+                          field.onChange(e.target.value ? e.target.value : undefined);
+                        }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormDescription>
@@ -344,7 +350,7 @@ export function EventForm({ defaultValues, isEditing = false, eventId }: EventFo
                               <Input
                                 placeholder="First Name"
                                 {...field}
-                                disabled={index < 4} // Don't allow editing of standard fields
+                                // Allow editing of all fields
                               />
                             </FormControl>
                             <FormMessage />
@@ -437,7 +443,7 @@ export function EventForm({ defaultValues, isEditing = false, eventId }: EventFo
                       )}
                     />
                     
-                    {index >= 4 && ( // Allow removal of custom fields
+                    {/* Allow removal of any field, even standard ones */}
                       <div className="flex justify-end">
                         <Button
                           type="button"
@@ -449,7 +455,6 @@ export function EventForm({ defaultValues, isEditing = false, eventId }: EventFo
                           Remove Field
                         </Button>
                       </div>
-                    )}
                   </div>
                 </div>
               ))}
