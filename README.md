@@ -1,6 +1,6 @@
 # Event Participant Management System
 
-This application helps manage event participants with registration forms, background checks, and automated approvals for returning participants.
+This application streamlines event participant management by providing registration forms, conducting background checks, and automating approvals for returning attendees.
 
 ## Features
 
